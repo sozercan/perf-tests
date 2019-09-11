@@ -1,0 +1,41 @@
+{
+  "apiVersion": "vlabs",
+  "properties": {
+    "orchestratorProfile": {
+      "orchestratorType": "Kubernetes",
+      "orchestratorRelease": "1.15",
+      "kubernetesConfig": {
+        "networkPlugin": "kubenet"
+      }
+    },
+    "masterProfile": {
+      "count": 1,
+      "dnsPrefix": "$AZURE_CLUSTER_NAME",
+      "vmSize": "Standard_DS1_v2",
+      "storageProfile": "ManagedDisks"
+    },
+    "agentPoolProfiles": [
+      {
+        "name": "agentpool1",
+        "count": 1,
+        "vmSize": "Standard_DS1_v2",
+        "storageProfile": "ManagedDisks",
+        "availabilityProfile": "VirtualMachineScaleSets"
+      }
+    ],
+    "linuxProfile": {
+      "adminUsername": "$AZURE_ADMIN_USERNAME",
+      "ssh": {
+        "publicKeys": [
+          {
+            "keyData": "$AZURE_SSH_KEY"
+          }
+        ]
+      }
+    },
+    "servicePrincipalProfile": {
+      "clientId": "$AZURE_CLIENT_ID",
+      "secret": "$AZURE_CLIENT_SECRET"
+    }
+  }
+}

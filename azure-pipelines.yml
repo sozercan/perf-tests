@@ -1,19 +1,17 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
-trigger:
-- master
+trigger: none
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: "ubuntu-latest"
 
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+  - script: curl -LO https://github.com/Azure/aks-engine/releases/download/v${AKS_ENGINE_VERSION}/aks-engine-v${AKS_ENGINE_VERSION}-linux-amd64.zip && unzip aks-engine-v${AKS_ENGINE_VERSION}-linux-amd64.zip && cd aks-engine-v${AKS_ENGINE_VERSION}-linux-amd64.zip && chmod +x aks-engine && sudo mv aks-engine /usr/local/bin/
+    displayName: "Download aks-engine"
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+  - script: ./aks-engine deploy $(envsubst < definition.json) --location $AZURE_LOCATION --subscription-id $AZURE_SUBSCRIPTION_ID --force-overwrite --client-id $AZURE_CLIENT_ID --client-secret $AZURE_CLIENT_SECRET
+    displayName: "Deploy Azure cluster"
+
+  - script: export KUBECONFIG=_output/$AZURE_CLUSTER_NAME/kubeconfig/kubeconfig.$AZURE_LOCATION.json
+    displayName: "get kubeconfig"
+
+  - script: ./run-e2e.sh cluster-loader2 --nodes=1 --provider=local --report-dir=_artifacts --testconfig=testing/node-throughput/config.yaml
+    displayName: "run node throughput test"
