@@ -35,7 +35,7 @@
     },
     "servicePrincipalProfile": {
       "clientId": "$AZURE_CLIENT_ID",
-      "secret": "$AZURE_CLIENT_SECRET"
+      "secret": "$CLIENT_SECRET"
     }
   }
 }
