@@ -25,4 +25,10 @@ steps:
 
   - script: ./clusterloader2/run-e2e.sh --nodes=1 --provider=local --report-dir=_artifacts --testconfig=testing/node-throughput/config.yaml
     displayName: "run node throughput test"
-# TODO: Teardown cluster
+
+  - script: |
+      az login -t microsoft.com --service-principal -u ${AZURE_CLIENT_ID} -p ${CLIENT_SECRET}
+      az delete -n ${AZURE_CLUSTER_NAME} --subscription ${AZURE_SUBSCRIPTION_ID}
+    displayName: "teardown cluster"
+    env:
+      CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
