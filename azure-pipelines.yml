@@ -43,19 +43,31 @@ steps:
       mkdir -p /home/vsts/.kube
       cp _output/${AZURE_CLUSTER_NAME}/kubeconfig/kubeconfig.${AZURE_LOCATION}.json /home/vsts/.kube/config
     workingDirectory: "$(modulePath)"
-    displayName: "copy kubeconfig"
+    displayName: "Copy kubeconfig"
 
   - script: go get -d ./...
     workingDirectory: "$(modulePath)"
-    displayName: "go get dependencies"
+    displayName: "Get dependencies"
 
   - script: ./run-e2e.sh cluster-loader2 --nodes=1 --provider=local --report-dir=_artifacts --testconfig=testing/node-throughput/config.yaml
     workingDirectory: "$(modulePath)"
-    displayName: "run node throughput test"
+    displayName: "Run node throughput test"
+
+  - script: ./run-e2e.sh cluster-loader2 --nodes=1 --provider=local --report-dir=_artifacts --testconfig=testing/node-throughput/config.yaml
+    workingDirectory: "$(modulePath)"
+    displayName: "Run node throughput test"
 
   - script: |
       az login -t microsoft.com --service-principal -u ${AZURE_CLIENT_ID} -p ${CLIENT_SECRET}
-      az delete -n ${AZURE_CLUSTER_NAME} --subscription ${AZURE_SUBSCRIPTION_ID}
-    displayName: "teardown cluster"
+      az group delete -n ${AZURE_CLUSTER_NAME} --subscription ${AZURE_SUBSCRIPTION_ID}
+    displayName: "Teardown cluster"
+    condition: succeededOrFailed()
     env:
       CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
+
+  - task: PublishTestResults@2
+    displayName: Publish Test Results
+    inputs:
+      testResultsFormat: 'JUnit'
+      testResultsFiles: $(modulePath)/_artifacts/junit.xml
+    condition: succeededOrFailed()
