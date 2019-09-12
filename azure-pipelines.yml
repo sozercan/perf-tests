@@ -11,6 +11,8 @@ jobs:
   - job: scalability_test
     displayName: Scalability Test
     pool: Upstream Pool
+    timeoutInMinutes: 100
+    cancelTimeoutInMinutes: 30
     workspace:
       clean: all
     steps:
@@ -33,6 +35,8 @@ jobs:
   - job: node_throughput_test
     displayName: Node Throughput Test
     pool: Upstream Pool
+    timeoutInMinutes: 30
+    cancelTimeoutInMinutes: 30
     workspace:
       clean: all
     steps:
