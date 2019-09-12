@@ -43,8 +43,8 @@ steps:
       CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
 
   - script: |
-      mkdir -p /home/vsts/.kube
-      cp _output/${AZURE_CLUSTER_NAME}/kubeconfig/kubeconfig.${AZURE_LOCATION}.json /home/vsts/.kube/config
+      sudo mkdir -p /home/vsts/.kube
+      sudo cp _output/${AZURE_CLUSTER_NAME}/kubeconfig/kubeconfig.${AZURE_LOCATION}.json /home/vsts/.kube/config
     workingDirectory: "$(modulePath)"
     displayName: "Copy kubeconfig"
 
@@ -52,13 +52,13 @@ steps:
     workingDirectory: "$(modulePath)"
     displayName: "Get dependencies"
 
-  - script: ./run-e2e.sh cluster-loader2 --nodes=1 --provider=local --report-dir=_artifacts --testconfig=testing/node-throughput/config.yaml
-    workingDirectory: "$(modulePath)"
-    displayName: "Run node throughput test"
+  # - script: ./run-e2e.sh cluster-loader2 --nodes=1 --provider=local --report-dir=_artifacts --testconfig=testing/node-throughput/config.yaml
+  #   workingDirectory: "$(modulePath)"
+  #   displayName: "Run node throughput test"
 
-  - script: ./run-e2e.sh cluster-loader2 --nodes=1 --provider=local --report-dir=_artifacts --testconfig=testing/node-throughput/config.yaml
+  - script: ./run-e2e.sh cluster-loader2 --nodes=100 --provider=local --report-dir=_artifacts --prometheus-scrape-etcd --testconfig=testing/density/config.yaml --testconfig=testing/load/config.yaml --testoverrides=./testing/density/100_nodes/override.yaml
     workingDirectory: "$(modulePath)"
-    displayName: "Run node throughput test"
+    displayName: "Run scalability test"
 
   - script: |
       az login -t microsoft.com --service-principal -u ${AZURE_CLIENT_ID} -p ${CLIENT_SECRET}

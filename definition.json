@@ -17,7 +17,7 @@
     "agentPoolProfiles": [
       {
         "name": "agentpool1",
-        "count": "$AGENT_POOL_COUNT",
+        "count": $AGENT_POOL_COUNT,
         "vmSize": "Standard_DS1_v2",
         "storageProfile": "ManagedDisks",
         "availabilityProfile": "VirtualMachineScaleSets"
