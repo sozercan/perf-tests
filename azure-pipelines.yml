@@ -6,8 +6,7 @@ variables:
   GOPATH: "$(system.defaultWorkingDirectory)/gopath" # Go workspace path
   modulePath: "$(GOPATH)/src/k8s.io/perf-tests" # Path to the module's code
 
-pool:
-  vmImage: "ubuntu-latest"
+pool: Upstream Pool
 
 steps:
   - script: |
@@ -21,8 +20,8 @@ steps:
     displayName: "Set up the Go workspace"
 
   - script: |
-      curl -LO https://github.com/Azure/aks-engine/releases/download/v${AKS_ENGINE_VERSION}/aks-engine-v${AKS_ENGINE_VERSION}-linux-amd64.zip
-      unzip aks-engine-v${AKS_ENGINE_VERSION}-linux-amd64.zip
+      curl -LO https://github.com/Azure/aks-engine/releases/download/v${AKS_ENGINE_VERSION}/aks-engine-v${AKS_ENGINE_VERSION}-linux-amd64.tar.gz
+      tar -zxvf aks-engine-v${AKS_ENGINE_VERSION}-linux-amd64.tar.gz
       chmod +x aks-engine-v${AKS_ENGINE_VERSION}-linux-amd64/aks-engine
       sudo mv aks-engine-v${AKS_ENGINE_VERSION}-linux-amd64/aks-engine /usr/local/bin/
     displayName: "Download aks-engine"
@@ -69,7 +68,7 @@ steps:
   - task: PublishTestResults@2
     displayName: Publish Test Results
     inputs:
-      testResultsFormat: 'JUnit'
+      testResultsFormat: "JUnit"
       testResultsFiles: $(modulePath)/clusterloader2/_artifacts/junit.xml
     condition: succeededOrFailed()
 
