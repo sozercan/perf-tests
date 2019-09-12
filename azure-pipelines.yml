@@ -30,7 +30,7 @@ steps:
     displayName: "Set cluster name"
 
   - script: |
-      ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa
+      echo -e 'y\n' | ssh-keygen -f ~/.ssh/id_rsa -t rsa -N ''
       echo "##vso[task.setvariable variable=AZURE_SSH_KEY]$(cat ~/.ssh/id_rsa.pub)"
     displayName: "Generate SSH key"
 
