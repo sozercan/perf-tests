@@ -6,8 +6,7 @@ variables:
   GOPATH: "$(system.defaultWorkingDirectory)/gopath" # Go workspace path
   modulePath: "$(GOPATH)/src/k8s.io/perf-tests" # Path to the module's code
 
-pool:
-  vmImage: "ubuntu-latest"
+pool: Upstream Pool
 
 steps:
   - script: |
