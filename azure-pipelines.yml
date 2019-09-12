@@ -47,12 +47,6 @@ steps:
     env:
       CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
 
-  - script: |
-      mkdir -p ~/.kube
-      cp _output/${AZURE_CLUSTER_NAME}/kubeconfig/kubeconfig.${AZURE_LOCATION}.json ~/.kube/config
-    workingDirectory: "$(modulePath)"
-    displayName: "Copy kubeconfig"
-
   - script: go get -d ./...
     workingDirectory: "$(modulePath)"
     displayName: "Get dependencies"
@@ -61,7 +55,16 @@ steps:
   #   workingDirectory: "$(modulePath)"
   #   displayName: "Run node throughput test"
 
-  - script: ./run-e2e.sh cluster-loader2 --nodes=100 --provider=local --report-dir=_artifacts --prometheus-scrape-etcd --testconfig=testing/density/config.yaml --testconfig=testing/load/config.yaml --testoverrides=./testing/density/100_nodes/override.yaml --master-internal-ip 10.240.255.5 --masterip ${AZURE_CLUSTER_NAME}.${AZURE_LOCATION}.cloudapp.azure.com --mastername k8s-master-$(cat _output/${AZURE_CLUSTER_NAME}/azuredeploy.json | jq .variables.masterVMNamePrefix | cut -c13-20)-0
+  - script:
+      ./run-e2e.sh cluster-loader2 --nodes=100 --provider=local --report-dir=_artifacts \
+      --kubeconfig _output/${AZURE_CLUSTER_NAME}/kubeconfig/kubeconfig.${AZURE_LOCATION}.json \
+      --master-internal-ip 10.240.255.5 \
+      --masterip ${AZURE_CLUSTER_NAME}.${AZURE_LOCATION}.cloudapp.azure.com \
+      --mastername k8s-master-$(cat _output/${AZURE_CLUSTER_NAME}/azuredeploy.json | jq .variables.masterVMNamePrefix | cut -c13-20)-0 \
+      -prometheus-scrape-etcd \
+      --testconfig=testing/density/config.yaml \
+      --testconfig=testing/load/config.yaml \
+      --testoverrides=./testing/density/100_nodes/override.yaml
     workingDirectory: "$(modulePath)"
     displayName: "Run scalability test"
 
