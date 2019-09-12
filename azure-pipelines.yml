@@ -1,12 +1,12 @@
 trigger: none
 
+pool: Upstream Pool
+
 variables:
   GOBIN: "$(GOPATH)/bin" # Go binaries path
-  GOROOT: "/usr/local/go1.12" # Go installation path
-  GOPATH: "$(system.defaultWorkingDirectory)/gopath" # Go workspace path
+  GOROOT: "/usr/lib/go-1.12" # Go installation path
+  GOPATH: "$(system.defaultWorkingDirectory)/go" # Go workspace path
   modulePath: "$(GOPATH)/src/k8s.io/perf-tests" # Path to the module's code
-
-pool: Upstream Pool
 
 steps:
   - script: |
@@ -14,10 +14,14 @@ steps:
       mkdir -p '$(GOPATH)/pkg'
       mkdir -p '$(modulePath)'
       shopt -s extglob
-      mv !(gopath) '$(modulePath)'
+      mv $(system.defaultWorkingDirectory)/* $(modulePath)
       echo '##vso[task.prependpath]$(GOBIN)'
       echo '##vso[task.prependpath]$(GOROOT)/bin'
     displayName: "Set up the Go workspace"
+
+  - script: go get -d ./...
+    workingDirectory: "$(modulePath)"
+    displayName: "Get dependencies"
 
   - script: |
       curl -LO https://github.com/Azure/aks-engine/releases/download/v${AKS_ENGINE_VERSION}/aks-engine-v${AKS_ENGINE_VERSION}-linux-amd64.tar.gz
@@ -32,6 +36,7 @@ steps:
   - script: |
       echo -e 'y\n' | ssh-keygen -f ~/.ssh/id_rsa -t rsa -N ''
       echo "##vso[task.setvariable variable=AZURE_SSH_KEY]$(cat ~/.ssh/id_rsa.pub)"
+      echo "##vso[task.setvariable variable=AZURE_ADMIN_USERNAME]$USER"
     displayName: "Generate SSH key"
 
   - script: |
@@ -41,15 +46,13 @@ steps:
     env:
       CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
 
-  - script: aks-engine deploy --api-model cluster.json --location ${AZURE_LOCATION} --subscription-id ${AZURE_SUBSCRIPTION_ID} --force-overwrite --client-id ${AZURE_CLIENT_ID} --client-secret ${CLIENT_SECRET}
+  - script: |
+      aks-engine deploy --api-model cluster.json --location ${AZURE_LOCATION} --subscription-id ${AZURE_SUBSCRIPTION_ID} --force-overwrite --client-id ${AZURE_CLIENT_ID} --client-secret ${CLIENT_SECRET}
+      cp _output/${AZURE_CLUSTER_NAME}/kubeconfig/kubeconfig.${AZURE_LOCATION}.json $(modulePath)/kubeconfig.json
     displayName: "Deploy Azure cluster"
     workingDirectory: "$(modulePath)"
     env:
       CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
-
-  - script: go get -d ./...
-    workingDirectory: "$(modulePath)"
-    displayName: "Get dependencies"
 
   # - script: ./run-e2e.sh cluster-loader2 --nodes=1 --provider=local --report-dir=_artifacts --testconfig=testing/node-throughput/config.yaml
   #   workingDirectory: "$(modulePath)"
@@ -57,11 +60,11 @@ steps:
 
   - script:
       ./run-e2e.sh cluster-loader2 --nodes=100 --provider=local --report-dir=_artifacts \
-      --kubeconfig _output/${AZURE_CLUSTER_NAME}/kubeconfig/kubeconfig.${AZURE_LOCATION}.json \
-      --master-internal-ip 10.240.255.5 \
-      --masterip ${AZURE_CLUSTER_NAME}.${AZURE_LOCATION}.cloudapp.azure.com \
-      --mastername k8s-master-$(cat _output/${AZURE_CLUSTER_NAME}/azuredeploy.json | jq .variables.masterVMNamePrefix | cut -c13-20)-0 \
-      -prometheus-scrape-etcd \
+      --kubeconfig="$(modulePath)/kubeconfig.json" \
+      --master-internal-ip=10.240.255.5 \
+      --masterip=${AZURE_CLUSTER_NAME}.${AZURE_LOCATION}.cloudapp.azure.com \
+      --mastername=k8s-master-$(cat _output/${AZURE_CLUSTER_NAME}/azuredeploy.json | jq .variables.masterVMNamePrefix | cut -c13-20)-0 \
+      --prometheus-scrape-etcd \
       --testconfig=testing/density/config.yaml \
       --testconfig=testing/load/config.yaml \
       --testoverrides=./testing/density/100_nodes/override.yaml
