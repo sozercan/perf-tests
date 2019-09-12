@@ -33,17 +33,18 @@ jobs:
           # sudo mv aks-engine-v${AKS_ENGINE_VERSION}-linux-amd64/aks-engine /usr/local/bin/
           curl -LO https://sertacstorage.blob.core.windows.net/aks-engine/aks-engine
           chmod +x aks-engine
-          sudo mv aks-engine /user/local/bin
+          sudo mv aks-engine /usr/local/bin
         displayName: "Download aks-engine"
 
       - script: echo "##vso[task.setvariable variable=AZURE_CLUSTER_NAME]e2e-$(openssl rand -hex 6)"
         displayName: "Set cluster name"
 
       - script: |
-          echo -e 'y\n' | ssh-keygen -f ~/.ssh/id_rsa -t rsa -N ''
-          echo "##vso[task.setvariable variable=AZURE_SSH_KEY]$(cat ~/.ssh/id_rsa.pub)"
           echo "##vso[task.setvariable variable=AZURE_ADMIN_USERNAME]$USER"
           echo "##vso[task.setvariable variable=AGENT_POOL_COUNT]100"
+          echo -e 'y\n' | ssh-keygen -f ~/.ssh/$(AZURE_CLUSTER_NAME) -t rsa -N ''
+          echo "##vso[task.setvariable variable=AZURE_SSH_KEY]$(cat ~/.ssh/$(AZURE_CLUSTER_NAME).pub)"
+          echo "##vso[task.setvariable variable=LOCAL_SSH_KEY]$USER/.ssh/$(AZURE_CLUSTER_NAME)"
         displayName: "Generate SSH key"
 
       - script: |
@@ -115,17 +116,18 @@ jobs:
           # sudo mv aks-engine-v${AKS_ENGINE_VERSION}-linux-amd64/aks-engine /usr/local/bin/
           curl -LO https://sertacstorage.blob.core.windows.net/aks-engine/aks-engine
           chmod +x aks-engine
-          sudo mv aks-engine /user/local/bin
+          sudo mv aks-engine /usr/local/bin
         displayName: "Download aks-engine"
 
       - script: echo "##vso[task.setvariable variable=AZURE_CLUSTER_NAME]e2e-$(openssl rand -hex 6)"
         displayName: "Set cluster name"
 
       - script: |
-          echo -e 'y\n' | ssh-keygen -f ~/.ssh/id_rsa -t rsa -N ''
-          echo "##vso[task.setvariable variable=AZURE_SSH_KEY]$(cat ~/.ssh/id_rsa.pub)"
           echo "##vso[task.setvariable variable=AZURE_ADMIN_USERNAME]$USER"
           echo "##vso[task.setvariable variable=AGENT_POOL_COUNT]1"
+          echo -e 'y\n' | ssh-keygen -f ~/.ssh/$(AZURE_CLUSTER_NAME) -t rsa -N ''
+          echo "##vso[task.setvariable variable=AZURE_SSH_KEY]$(cat ~/.ssh/$(AZURE_CLUSTER_NAME).pub)"
+          echo "##vso[task.setvariable variable=LOCAL_SSH_KEY]$USER/.ssh/$(AZURE_CLUSTER_NAME)"
         displayName: "Generate SSH key"
 
       - script: |
