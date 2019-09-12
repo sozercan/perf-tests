@@ -27,7 +27,11 @@ steps:
       sudo mv aks-engine-v${AKS_ENGINE_VERSION}-linux-amd64/aks-engine /usr/local/bin/
     displayName: "Download aks-engine"
 
-  - script: envsubst < definition.json > cluster.json
+  - script: echo "##vso[task.setvariable variable=AZURE_CLUSTER_NAME]e2e-$(openssl rand -hex 6)"
+    displayName: "Set cluster name"
+
+  - script: |
+      envsubst < definition.json > cluster.json
     workingDirectory: "$(modulePath)"
     displayName: "Build apimodel"
     env:
@@ -59,7 +63,7 @@ steps:
 
   - script: |
       az login -t microsoft.com --service-principal -u ${AZURE_CLIENT_ID} -p ${CLIENT_SECRET}
-      az group delete -n ${AZURE_CLUSTER_NAME} --subscription ${AZURE_SUBSCRIPTION_ID}
+      az group delete -n ${AZURE_CLUSTER_NAME} --subscription ${AZURE_SUBSCRIPTION_ID} --yes
     displayName: "Teardown cluster"
     condition: succeededOrFailed()
     env:
@@ -69,5 +73,5 @@ steps:
     displayName: Publish Test Results
     inputs:
       testResultsFormat: 'JUnit'
-      testResultsFiles: $(modulePath)/_artifacts/junit.xml
+      testResultsFiles: $(modulePath)/clusterloader2/_artifacts/junit.xml
     condition: succeededOrFailed()
