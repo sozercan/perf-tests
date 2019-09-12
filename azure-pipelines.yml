@@ -62,9 +62,16 @@ steps:
   #   workingDirectory: "$(modulePath)"
   #   displayName: "Run node throughput test"
 
-  - script: ./run-e2e.sh cluster-loader2 --nodes=100 --provider=local --report-dir=_artifacts --prometheus-scrape-etcd --testconfig=testing/density/config.yaml --testconfig=testing/load/config.yaml --testoverrides=./testing/density/100_nodes/override.yaml
+  - script: ./run-e2e.sh cluster-loader2 --nodes=100 --provider=local --report-dir=_artifacts --prometheus-scrape-etcd --testconfig=testing/density/config.yaml --testconfig=testing/load/config.yaml --testoverrides=./testing/density/100_nodes/override.yaml --master-internal-ip 10.240.255.5 --masterip ${AZURE_CLUSTER_NAME}.${AZURE_LOCATION}.cloudapp.azure.com --mastername k8s-master-$(cat _output/${AZURE_CLUSTER_NAME}/azuredeploy.json | jq .variables.masterVMNamePrefix | cut -c13-20)-0
     workingDirectory: "$(modulePath)"
     displayName: "Run scalability test"
+
+  - task: PublishTestResults@2
+    displayName: Publish Test Results
+    inputs:
+      testResultsFormat: 'JUnit'
+      testResultsFiles: $(modulePath)/clusterloader2/_artifacts/junit.xml
+    condition: succeededOrFailed()
 
   - script: |
       az login -t microsoft.com --service-principal -u ${AZURE_CLIENT_ID} -p ${CLIENT_SECRET}
@@ -73,10 +80,3 @@ steps:
     condition: succeededOrFailed()
     env:
       CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
-
-  - task: PublishTestResults@2
-    displayName: Publish Test Results
-    inputs:
-      testResultsFormat: 'JUnit'
-      testResultsFiles: $(modulePath)/clusterloader2/_artifacts/junit.xml
-    condition: succeededOrFailed()
