@@ -3,7 +3,7 @@
   "properties": {
     "orchestratorProfile": {
       "orchestratorType": "Kubernetes",
-      "orchestratorRelease": "1.15",
+      "orchestratorRelease": "$KUBERNETES_VERSION",
       "kubernetesConfig": {
         "networkPlugin": "kubenet"
       }
@@ -17,7 +17,7 @@
     "agentPoolProfiles": [
       {
         "name": "agentpool1",
-        "count": 1,
+        "count": "$AGENT_POOL_COUNT",
         "vmSize": "Standard_DS1_v2",
         "storageProfile": "ManagedDisks",
         "availabilityProfile": "VirtualMachineScaleSets"
