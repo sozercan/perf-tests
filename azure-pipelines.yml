@@ -11,6 +11,8 @@ jobs:
   - job: scalability_test
     displayName: Scalability Test
     pool: Upstream Pool
+    workspace:
+      clean: all
     steps:
       - script: |
           mkdir -p '$(GOBIN)'
@@ -94,13 +96,15 @@ jobs:
   - job: node_throughput_test
     displayName: Node Throughput Test
     pool: Upstream Pool
+    workspace:
+      clean: all
     steps:
       - script: |
           mkdir -p '$(GOBIN)'
           mkdir -p '$(GOPATH)/pkg'
           mkdir -p '$(modulePath)'
           shopt -s extglob
-          mv $(system.defaultWorkingDirectory)/* $(modulePath)
+          cp -rf $(system.defaultWorkingDirectory)/* $(modulePath)
           echo '##vso[task.prependpath]$(GOBIN)'
           echo '##vso[task.prependpath]$(GOROOT)/bin'
         displayName: "Set up the Go workspace"
