@@ -31,6 +31,11 @@ steps:
     displayName: "Set cluster name"
 
   - script: |
+      ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa
+      echo "##vso[task.setvariable variable=AZURE_SSH_KEY]$(cat ~/.ssh/id_rsa.pub)"
+    displayName: "Generate SSH key"
+
+  - script: |
       envsubst < definition.json > cluster.json
     workingDirectory: "$(modulePath)"
     displayName: "Build apimodel"
@@ -44,8 +49,8 @@ steps:
       CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
 
   - script: |
-      mkdir -p /home/vsts/.kube
-      cp _output/${AZURE_CLUSTER_NAME}/kubeconfig/kubeconfig.${AZURE_LOCATION}.json /home/vsts/.kube/config
+      mkdir -p ~/.kube
+      cp _output/${AZURE_CLUSTER_NAME}/kubeconfig/kubeconfig.${AZURE_LOCATION}.json ~/.kube/config
     workingDirectory: "$(modulePath)"
     displayName: "Copy kubeconfig"
 
