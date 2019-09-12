@@ -1,0 +1,15 @@
+steps:
+  - task: PublishTestResults@2
+    displayName: Publish Test Results
+    inputs:
+      testResultsFormat: "JUnit"
+      testResultsFiles: $(modulePath)/clusterloader2/_artifacts/junit.xml
+    condition: succeededOrFailed()
+
+  - script: |
+      az login -t microsoft.com --service-principal -u ${AZURE_CLIENT_ID} -p ${CLIENT_SECRET}
+      az group delete -n ${AZURE_CLUSTER_NAME} --subscription ${AZURE_SUBSCRIPTION_ID} --yes
+    displayName: "Teardown cluster"
+    condition: succeededOrFailed()
+    env:
+      CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
