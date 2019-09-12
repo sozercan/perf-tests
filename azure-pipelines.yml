@@ -44,8 +44,8 @@ steps:
       CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
 
   - script: |
-      sudo mkdir -p /home/vsts/.kube
-      sudo cp _output/${AZURE_CLUSTER_NAME}/kubeconfig/kubeconfig.${AZURE_LOCATION}.json /home/vsts/.kube/config
+      mkdir -p /home/vsts/.kube
+      cp _output/${AZURE_CLUSTER_NAME}/kubeconfig/kubeconfig.${AZURE_LOCATION}.json /home/vsts/.kube/config
     workingDirectory: "$(modulePath)"
     displayName: "Copy kubeconfig"
 
