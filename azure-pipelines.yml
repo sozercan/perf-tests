@@ -11,7 +11,7 @@ jobs:
   - job: scalability_test
     displayName: Scalability Test
     pool: Upstream Pool
-    timeoutInMinutes: 100
+    timeoutInMinutes: 240
     cancelTimeoutInMinutes: 30
     workspace:
       clean: all
