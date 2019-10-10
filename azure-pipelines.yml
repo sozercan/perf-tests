@@ -8,32 +8,53 @@ variables:
 
 jobs:
   # Scalability Test
-  - job: scalability_test
-    displayName: Scalability Test
-    pool: Upstream Pool
-    timeoutInMinutes: 240
-    cancelTimeoutInMinutes: 30
-    workspace:
-      clean: all
-    steps:
-      - template: azure-setup.yaml
-      - script:
-          ./run-e2e.sh cluster-loader2 --nodes=100 --provider=local --report-dir=_artifacts \
-          --kubeconfig="$(modulePath)/kubeconfig.json" \
-          --master-internal-ip=10.240.255.5 \
-          --masterip=${AZURE_CLUSTER_NAME}.${AZURE_LOCATION}.cloudapp.azure.com \
-          --mastername=k8s-master-$(cat _output/${AZURE_CLUSTER_NAME}/azuredeploy.json | jq .variables.masterVMNamePrefix | cut -c13-20)-0 \
-          --prometheus-scrape-etcd \
-          --testconfig=testing/density/config.yaml \
-          --testconfig=testing/load/config.yaml \
-          --testoverrides=./testing/density/100_nodes/override.yaml
-        workingDirectory: "$(modulePath)"
-        displayName: "Run scalability test"
-      - template: azure-teardown.yaml
+  # - job: scalability_test
+  #   displayName: Scalability Test
+  #   pool: Upstream Pool
+  #   timeoutInMinutes: 240
+  #   cancelTimeoutInMinutes: 30
+  #   workspace:
+  #     clean: all
+  #   steps:
+  #     - template: azure-setup.yaml
+  #     - script:
+  #         ./run-e2e.sh cluster-loader2 --nodes=100 --provider=local --report-dir=_artifacts \
+  #         --kubeconfig="$(modulePath)/kubeconfig.json" \
+  #         --master-internal-ip=10.240.255.5 \
+  #         --masterip=${AZURE_CLUSTER_NAME}.${AZURE_LOCATION}.cloudapp.azure.com \
+  #         --mastername=k8s-master-$(cat _output/${AZURE_CLUSTER_NAME}/azuredeploy.json | jq .variables.masterVMNamePrefix | cut -c13-20)-0 \
+  #         --prometheus-scrape-etcd \
+  #         --testconfig=testing/density/config.yaml \
+  #         --testconfig=testing/load/config.yaml \
+  #         --testoverrides=./testing/density/100_nodes/override.yaml
+  #       workingDirectory: "$(modulePath)"
+  #       displayName: "Run scalability test"
+  #     - template: azure-teardown.yaml
 
   # Node Throughput Test
-  - job: node_throughput_test
-    displayName: Node Throughput Test
+  # - job: node_throughput_test
+  #   displayName: Node Throughput Test
+  #   pool: Upstream Pool
+  #   timeoutInMinutes: 30
+  #   cancelTimeoutInMinutes: 30
+  #   workspace:
+  #     clean: all
+  #   steps:
+  #     - template: azure-setup.yaml
+  #     - script:
+  #         ./run-e2e.sh cluster-loader2 --nodes=1 --provider=local --report-dir=_artifacts \
+  #         --kubeconfig="$(modulePath)/kubeconfig.json" \
+  #         --master-internal-ip=10.240.255.5 \
+  #         --masterip=${AZURE_CLUSTER_NAME}.${AZURE_LOCATION}.cloudapp.azure.com \
+  #         --mastername=k8s-master-$(cat _output/${AZURE_CLUSTER_NAME}/azuredeploy.json | jq .variables.masterVMNamePrefix | cut -c13-20)-0 \
+  #         --testconfig=testing/node-throughput/config.yaml
+  #       workingDirectory: "$(modulePath)"
+  #       displayName: "Run node throughput test"
+  #     - template: azure-teardown.yaml
+
+  # Gatekeeper load test
+  - job: gatekeeper_Test
+    displayName:  Gatekeeper load test
     pool: Upstream Pool
     timeoutInMinutes: 30
     cancelTimeoutInMinutes: 30
@@ -47,7 +68,7 @@ jobs:
           --master-internal-ip=10.240.255.5 \
           --masterip=${AZURE_CLUSTER_NAME}.${AZURE_LOCATION}.cloudapp.azure.com \
           --mastername=k8s-master-$(cat _output/${AZURE_CLUSTER_NAME}/azuredeploy.json | jq .variables.masterVMNamePrefix | cut -c13-20)-0 \
-          --testconfig=testing/node-throughput/config.yaml
+          --testconfig=testing/gatekeeper/config.yaml
         workingDirectory: "$(modulePath)"
-        displayName: "Run node throughput test"
+        displayName: "Run gatekeeper test"
       - template: azure-teardown.yaml

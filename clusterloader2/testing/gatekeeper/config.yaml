@@ -1,0 +1,81 @@
+# ASSUMPTIONS:
+# - This test is designed for 1-node cluster.
+
+#Constants
+{{$POD_COUNT := 150}}
+{{$POD_THROUGHPUT := DefaultParam .POD_THROUGHPUT 2}}
+
+name: node-throughput
+automanagedNamespaces: {{$POD_COUNT}}
+tuningSets:
+- name: Sequence
+  parallelismLimitedLoad:
+    parallelismLimit: 1
+- name: UniformQPS
+  qpsLoad:
+    qps: {{$POD_THROUGHPUT}}
+steps:
+- name: Starting measurements
+  measurements:
+  - Identifier: ResourceUsageSummary
+    Method: ResourceUsageSummary
+    Params:
+      action: start
+# - name: deploy allowedrepos template and constraint
+#   phases:
+#   - replicasPerNamespace: 0
+#     tuningSet: Sequence
+#     objectBundle:
+#     - basename: k8sallowedrepos
+#       objectTemplatePath: allowedrepos-template.yaml
+#   - replicasPerNamespace: 0
+#     tuningSet: Sequence
+#     objectBundle:
+#     - basename: k8sallowedrepos
+#       objectTemplatePath: allowedrepos-constraint.yaml
+- measurements:
+  - Identifier: WaitForRunningLatencyRCs
+    Method: WaitForControlledPodsRunning
+    Params:
+      action: start
+      apiVersion: v1
+      kind: ReplicationController
+      labelSelector: group = latency
+      operationTimeout: 15m
+- phases:
+  - namespaceRange:
+      min: 1
+      max: {{$POD_COUNT}}
+    replicasPerNamespace: 1
+    tuningSet: UniformQPS
+    objectBundle:
+    - basename: latency-pod-rc
+      objectTemplatePath: rc.yaml
+      templateFillMap:
+        Replicas: 1
+        Group: latency
+- measurements:
+  - Identifier: WaitForRunningLatencyRCs
+    Method: WaitForControlledPodsRunning
+    Params:
+      action: gather
+- phases:
+  - namespaceRange:
+      min: 1
+      max: {{$POD_COUNT}}
+    replicasPerNamespace: 0
+    tuningSet: UniformQPS
+    objectBundle:
+    - basename: latency-pod-rc
+      objectTemplatePath: rc.yaml
+- measurements:
+  - Identifier: WaitForRunningLatencyRCs
+    Method: WaitForControlledPodsRunning
+    Params:
+      action: gather
+# Collect measurements
+- measurements:
+  - Identifier: ResourceUsageSummary
+    Method: ResourceUsageSummary
+    Params:
+      action: gather
