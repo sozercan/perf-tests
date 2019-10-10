@@ -5,7 +5,10 @@
       "orchestratorType": "Kubernetes",
       "orchestratorRelease": "$KUBERNETES_VERSION",
       "kubernetesConfig": {
-        "networkPlugin": "kubenet"
+        "networkPlugin": "kubenet",
+        "kubeletConfig": {
+          "--max-pods": "200"
+        }
       }
     },
     "masterProfile": {

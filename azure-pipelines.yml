@@ -78,9 +78,8 @@ jobs:
           kubectl apply -f $(modulePath)/clusterloader2/testing/gatekeeper/sync.yaml
           sleep 5
           kubectl apply -f $(modulePath)/clusterloader2/testing/gatekeeper/allowedrepos-template.yaml
-          sleep 5
+          sleep 60
           kubectl apply -f $(modulePath)/clusterloader2/testing/gatekeeper/allowedrepos-constraint.yaml
-          sleep 5
       - script:
           ./run-e2e.sh cluster-loader2 --nodes=1 --provider=local --report-dir=_artifacts \
           --kubeconfig="$(modulePath)/kubeconfig.json" \

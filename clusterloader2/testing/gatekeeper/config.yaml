@@ -2,7 +2,7 @@
 # - This test is designed for 1-node cluster.
 
 #Constants
-{{$POD_COUNT := 150}}
+{{$POD_COUNT := 20}}
 {{$POD_THROUGHPUT := DefaultParam .POD_THROUGHPUT 2}}
 
 name: node-throughput
