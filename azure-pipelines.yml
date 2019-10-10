@@ -16,6 +16,9 @@ jobs:
   #   workspace:
   #     clean: all
   #   steps:
+  #     - script: |
+  #         echo "##vso[task.setvariable variable=AGENT_POOL_COUNT]100"
+  #       displayName: "Set agent pool count"
   #     - template: azure-setup.yaml
   #     - script:
   #         ./run-e2e.sh cluster-loader2 --nodes=100 --provider=local --report-dir=_artifacts \
@@ -40,6 +43,9 @@ jobs:
   #   workspace:
   #     clean: all
   #   steps:
+  #     - script: |
+  #         echo "##vso[task.setvariable variable=AGENT_POOL_COUNT]1"
+  #       displayName: "Set agent pool count"
   #     - template: azure-setup.yaml
   #     - script:
   #         ./run-e2e.sh cluster-loader2 --nodes=1 --provider=local --report-dir=_artifacts \
@@ -61,6 +67,9 @@ jobs:
     workspace:
       clean: all
     steps:
+      - script: |
+          echo "##vso[task.setvariable variable=AGENT_POOL_COUNT]1"
+        displayName: "Set agent pool count"
       - template: azure-setup.yaml
       - script:
           ./run-e2e.sh cluster-loader2 --nodes=1 --provider=local --report-dir=_artifacts \

@@ -31,7 +31,6 @@ steps:
 
   - script: |
       echo "##vso[task.setvariable variable=AZURE_ADMIN_USERNAME]$USER"
-      echo "##vso[task.setvariable variable=AGENT_POOL_COUNT]1"
       echo -e 'y\n' | ssh-keygen -f ~/.ssh/$(AZURE_CLUSTER_NAME) -t rsa -N ''
       echo "##vso[task.setvariable variable=AZURE_SSH_KEY]$(cat ~/.ssh/$(AZURE_CLUSTER_NAME).pub)"
       echo "##vso[task.setvariable variable=LOCAL_SSH_KEY]$HOME/.ssh/$(AZURE_CLUSTER_NAME)"
