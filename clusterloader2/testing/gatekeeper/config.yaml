@@ -2,7 +2,7 @@
 # - This test is designed for 1-node cluster.
 
 #Constants
-{{$POD_COUNT := 20}}
+{{$POD_COUNT := 100}}
 {{$POD_THROUGHPUT := DefaultParam .POD_THROUGHPUT 2}}
 
 name: node-throughput
@@ -21,18 +21,6 @@ steps:
     Method: ResourceUsageSummary
     Params:
       action: start
-# - name: deploy allowedrepos template and constraint
-#   phases:
-#   - replicasPerNamespace: 0
-#     tuningSet: Sequence
-#     objectBundle:
-#     - basename: k8sallowedrepos
-#       objectTemplatePath: allowedrepos-template.yaml
-#   - replicasPerNamespace: 0
-#     tuningSet: Sequence
-#     objectBundle:
-#     - basename: k8sallowedrepos
-#       objectTemplatePath: allowedrepos-constraint.yaml
 - measurements:
   - Identifier: WaitForRunningLatencyRCs
     Method: WaitForControlledPodsRunning
