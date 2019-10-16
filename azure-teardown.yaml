@@ -8,7 +8,7 @@ steps:
 
   - script: |
       cat $(modulePath)/clusterloader2/_artifacts/ResourceUsageSummary*
-      cp $(modulePath)/_artifacts/ResourceUsageSummary* $(Build.ArtifactStagingDirectory)
+      cp $(modulePath)/clusterloader2/_artifacts/* $(Build.ArtifactStagingDirectory)
     displayName: Copy artifacts
 
   - task: PublishBuildArtifacts@1
