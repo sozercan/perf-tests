@@ -7,8 +7,11 @@ steps:
     condition: succeededOrFailed()
 
   - script: |
-      cat $(modulePath)/clusterloader2/_artifacts/ResourceUsageSummary*
-      cp $(modulePath)/clusterloader2/_artifacts/* $(Build.ArtifactStagingDirectory)
+      cd clusterloader2/_artifacts
+      cat ResourceUsageSummary*
+      for f in *:*; do mv -v "$f" $(echo "$f" | tr ':' '-'); done
+      cp * $(Build.ArtifactStagingDirectory)
+    workingDirectory: "$(modulePath)"
     displayName: Copy artifacts
 
   - task: PublishBuildArtifacts@1
