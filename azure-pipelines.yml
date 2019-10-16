@@ -73,6 +73,7 @@ jobs:
       - template: azure-setup.yaml
       - script: |
           export KUBECONFIG="kubeconfig.json"
+          envsubst < clusterloader2/testing/gatekeeper/gk-template.yaml > clusterloader2/testing/gatekeeper/gk.yaml
           ./deploy_gk.sh
           envsubst < clusterloader2/testing/gatekeeper/config-template.yaml > clusterloader2/testing/gatekeeper/config.yaml
         displayName: "Deploy gatekeeper"
