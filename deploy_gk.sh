@@ -16,4 +16,3 @@ if [ $DEPLOY_GATEKEEPER = "true" ]; then
         sleep 60
     fi
 fi
-

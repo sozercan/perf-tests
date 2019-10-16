@@ -2,11 +2,10 @@
 # - This test is designed for 1-node cluster.
 
 #Constants
-{{$POD_COUNT := 100}}
 {{$POD_THROUGHPUT := DefaultParam .POD_THROUGHPUT 2}}
 
 name: gatekeeper
-automanagedNamespaces: {{$POD_COUNT}}
+automanagedNamespaces: $POD_COUNT
 tuningSets:
 - name: UniformQPS
   qpsLoad:
@@ -30,7 +29,7 @@ steps:
 - phases:
   - namespaceRange:
       min: 1
-      max: {{$POD_COUNT}}
+      max: $POD_COUNT
     replicasPerNamespace: 1
     tuningSet: UniformQPS
     objectBundle:
@@ -47,7 +46,7 @@ steps:
 - phases:
   - namespaceRange:
       min: 1
-      max: {{$POD_COUNT}}
+      max: $POD_COUNT
     replicasPerNamespace: 0
     tuningSet: UniformQPS
     objectBundle:

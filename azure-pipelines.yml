@@ -72,9 +72,11 @@ jobs:
         displayName: "Set agent pool count"
       - template: azure-setup.yaml
       - script: |
-          export KUBECONFIG="$(modulePath)/kubeconfig.json"
-          $(modulePath)/deploy_gk.sh
+          export KUBECONFIG="kubeconfig.json"
+          ./deploy_gk.sh
+          envsubst < clusterloader2/testing/gatekeeper/config-template.yaml > clusterloader2/testing/gatekeeper/config.yaml
         displayName: "Deploy gatekeeper"
+        workingDirectory: "$(modulePath)"
       - script:
           ./run-e2e.sh cluster-loader2 --nodes=1 --provider=local --report-dir=_artifacts \
           --kubeconfig="$(modulePath)/kubeconfig.json" \
