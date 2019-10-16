@@ -5,12 +5,9 @@
 {{$POD_COUNT := 100}}
 {{$POD_THROUGHPUT := DefaultParam .POD_THROUGHPUT 2}}
 
-name: node-throughput
+name: gatekeeper
 automanagedNamespaces: {{$POD_COUNT}}
 tuningSets:
-- name: Sequence
-  parallelismLimitedLoad:
-    parallelismLimit: 1
 - name: UniformQPS
   qpsLoad:
     qps: {{$POD_THROUGHPUT}}

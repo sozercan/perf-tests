@@ -98,7 +98,7 @@ func (p *profileMeasurement) start(config *measurement.MeasurementConfig) error 
 	// So for now we make the profiling frequency proportional to the cluster size.
 	// We may want to revisit ot adjust it in the future.
 	numNodes := config.ClusterFramework.GetClusterConfig().Nodes
-	profileFrequency := time.Duration(5+numNodes/250) * time.Minute
+	profileFrequency := time.Duration(5+numNodes/250) * time.Second
 
 	go func() {
 		defer p.wg.Done()
