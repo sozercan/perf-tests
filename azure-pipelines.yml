@@ -74,8 +74,8 @@ jobs:
       - script: |
           export KUBECONFIG="kubeconfig.json"
           envsubst < clusterloader2/testing/gatekeeper/gk-template.yaml > clusterloader2/testing/gatekeeper/gk.yaml
-          ./deploy_gk.sh
           envsubst < clusterloader2/testing/gatekeeper/config-template.yaml > clusterloader2/testing/gatekeeper/config.yaml
+          ./deploy_gk.sh
         displayName: "Deploy gatekeeper"
         workingDirectory: "$(modulePath)"
       - script:
@@ -86,5 +86,5 @@ jobs:
           --mastername=k8s-master-$(cat _output/${AZURE_CLUSTER_NAME}/azuredeploy.json | jq .variables.masterVMNamePrefix | cut -c13-20)-0 \
           --testconfig=testing/gatekeeper/config.yaml
         workingDirectory: "$(modulePath)"
-        displayName: "Run gatekeeper test"
+        displayName: "Run clusterloader2 test"
       - template: azure-teardown.yaml
