@@ -6,12 +6,10 @@ steps:
       testResultsFiles: $(modulePath)/clusterloader2/_artifacts/junit.xml
     condition: succeededOrFailed()
 
-  - script: cat $(modulePath)/clusterloader2/_artifacts/ResourceUsageSummary*
-    displayName: "Resource usage summary"
-    condition: succeededOrFailed()
-
   - script: |
+      cat $(modulePath)/clusterloader2/_artifacts/ResourceUsageSummary*
       cp $(modulePath)/_artifacts/ResourceUsageSummary* $(Build.ArtifactStagingDirectory)
+    displayName: Copy artifacts
 
   - task: PublishBuildArtifacts@1
     displayName: Save artifacts
