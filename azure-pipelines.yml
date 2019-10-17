@@ -60,6 +60,19 @@ jobs:
 
   # Gatekeeper load test
   - job: gatekeeper_Test
+    strategy:
+      matrix:
+        pod-100:
+          POD_COUNT: 100
+        pod-200:
+          POD_COUNT: 200
+        pod-300:
+          POD_COUNT: 300
+        pod-500:
+          POD_COUNT: 500
+        pod-800:
+          POD_COUNT: 800
+      maxParallel: 5
     displayName: Gatekeeper load test
     pool: Upstream Pool
     timeoutInMinutes: 30
