@@ -24,10 +24,18 @@ steps:
       curl -LO https://sertacstorage.blob.core.windows.net/aks-engine/aks-engine
       chmod +x aks-engine
       sudo mv aks-engine /usr/local/bin
+
+      # Download kubectl
       curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
       chmod +x kubectl
       sudo mv kubectl /usr/local/bin/
-    displayName: "Download kubectl and aks-engine"
+
+      # Download json2csv
+      curl -LO https://github.com/yukithm/json2csv/releases/download/v0.1.1/json2csv-linux-amd64
+      mv json2csv-linux-amd64 json2csv
+      chmod +x json2csv
+      sudo mv json2csv /usr/local/bin
+    displayName: "Download binaries"
 
   - script: echo "##vso[task.setvariable variable=AZURE_CLUSTER_NAME]load-e2e-$(openssl rand -hex 6)"
     displayName: "Set cluster name"
