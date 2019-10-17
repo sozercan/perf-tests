@@ -59,7 +59,7 @@ jobs:
   #     - template: azure-teardown.yaml
 
   # Gatekeeper load test
-  - job: gatekeeper_Test
+  - job: gatekeeper_test
     strategy:
       matrix:
         pod-100:
@@ -92,7 +92,7 @@ jobs:
         displayName: "Deploy gatekeeper"
         workingDirectory: "$(modulePath)"
       - script:
-          ./run-e2e.sh cluster-loader2 --nodes=1 --provider=local --report-dir=_artifacts \
+          ./run-e2e.sh cluster-loader2 --nodes=${AGENT_POOL_COUNT} --provider=local --report-dir=_artifacts \
           --kubeconfig="$(modulePath)/kubeconfig.json" \
           --master-internal-ip=10.240.255.5 \
           --masterip=${AZURE_CLUSTER_NAME}.${AZURE_LOCATION}.cloudapp.azure.com \
