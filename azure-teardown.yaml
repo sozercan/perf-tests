@@ -13,7 +13,7 @@ steps:
       for f in *:*; do mv -v "$f" $(echo "$f" | tr ':' '-'); done
       # convert to csv
       for f in ResourceUsageSummary*.json ; do json2csv --header-style=slash --path=/100 "$f" > "${f%.json}.csv" ; done
-      mkdir -p ${POD_COUNT}
+      mkdir -p $(Build.ArtifactStagingDirectory)/${POD_COUNT}
       cp ResourceUsageSummary* $(Build.ArtifactStagingDirectory)/${POD_COUNT}
     workingDirectory: "$(modulePath)"
     displayName: Copy artifacts
