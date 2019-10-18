@@ -9,4 +9,4 @@ spec:
         kinds: ["Pod"]
   parameters:
     repos:
-      - "only-this-repo"
+      - "k8s.gcr.io"
