@@ -86,12 +86,15 @@ jobs:
       - template: azure-setup.yaml
       - script: |
           export KUBECONFIG="kubeconfig.json"
+          # substitute gatekeeper variables
           envsubst < clusterloader2/testing/gatekeeper/gk-template.yaml > clusterloader2/testing/gatekeeper/gk.yaml
+          # substitute e2e config variables
           envsubst < clusterloader2/testing/gatekeeper/config-template.yaml > clusterloader2/testing/gatekeeper/config.yaml
           ./deploy_gk.sh
         displayName: "Deploy gatekeeper"
         workingDirectory: "$(modulePath)"
       - script:
+          export KUBECONFIG="kubeconfig.json"
           ./run-e2e.sh cluster-loader2 --nodes=${AGENT_POOL_COUNT} --provider=local --report-dir=_artifacts \
           --kubeconfig="$(modulePath)/kubeconfig.json" \
           --master-internal-ip=$(kubectl get nodes -l "kubernetes.io/role"=="master" -o jsonpath='{.items[*].status.addresses[?(@.type=="InternalIP")].address}') \
