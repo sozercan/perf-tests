@@ -97,7 +97,7 @@ jobs:
         workingDirectory: "$(modulePath)"
       - script:
           ./run-e2e.sh cluster-loader2 --nodes=${AGENT_POOL_COUNT} --provider=local --report-dir=_artifacts \
-          --kubeconfig="kubeconfig.json" \
+          --kubeconfig="$(modulePath)/kubeconfig.json" \
           --master-internal-ip=${MASTER_INTERNAL_IP} \
           --masterip=${AZURE_CLUSTER_NAME}.${AZURE_LOCATION}.cloudapp.azure.com \
           --mastername=k8s-master-$(cat _output/${AZURE_CLUSTER_NAME}/azuredeploy.json | jq .variables.masterVMNamePrefix | cut -c13-20)-0 \
