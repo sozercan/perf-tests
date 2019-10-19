@@ -3,10 +3,11 @@ kind: K8sAllowedRepos
 metadata:
   name: prod-repo-is-openpolicyagent
 spec:
+  enforcementAction: dryrun
   match:
     kinds:
       - apiGroups: [""]
         kinds: ["Pod"]
   parameters:
     repos:
-      - "k8s.gcr.io"
+      - "allowed-repo"
