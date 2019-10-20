@@ -75,7 +75,7 @@ jobs:
       maxParallel: 5
     displayName: Gatekeeper load test
     pool: Upstream Pool
-    timeoutInMinutes: 180
+    timeoutInMinutes: 240
     cancelTimeoutInMinutes: 30
     workspace:
       clean: all

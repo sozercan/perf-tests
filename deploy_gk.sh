@@ -12,7 +12,7 @@ if [ $DEPLOY_GATEKEEPER = "true" ]; then
             kubectl apply -f clusterloader2/testing/gatekeeper/allowedrepos-template.yaml
             sleep 100
             kubectl apply -f clusterloader2/testing/gatekeeper/allowedrepos-constraint.yaml
-            sleep 30
+            sleep 120
 
             # TODO: multiple templates
             # TODO: multiple constraints
