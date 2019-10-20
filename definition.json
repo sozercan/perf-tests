@@ -14,14 +14,14 @@
     "masterProfile": {
       "count": 1,
       "dnsPrefix": "$AZURE_CLUSTER_NAME",
-      "vmSize": "Standard_DS1_v2",
+      "vmSize": "Standard_DS4_v2",
       "storageProfile": "ManagedDisks"
     },
     "agentPoolProfiles": [
       {
         "name": "agentpool1",
         "count": $AGENT_POOL_COUNT,
-        "vmSize": "Standard_DS1_v2",
+        "vmSize": "Standard_DS2_v2",
         "storageProfile": "ManagedDisks",
         "availabilityProfile": "VirtualMachineScaleSets"
       }
