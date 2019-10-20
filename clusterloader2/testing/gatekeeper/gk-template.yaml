@@ -314,7 +314,7 @@ spec:
     spec:
       containers:
       - args:
-        - --auditInterval=30
+        - --auditInterval=$AUDIT_INTERVAL
         - --port=8443
         - --constraintViolationsLimit=$CONSTRAINT_VIOLATIONS_LIMIT
         env:
@@ -329,7 +329,7 @@ spec:
               fieldPath: metadata.name
         - name: SECRET_NAME
           value: gatekeeper-webhook-server-secret
-        image: quay.io/open-policy-agent/gatekeeper:v3.0.4-beta.1
+        image: quay.io/open-policy-agent/gatekeeper:v3.0.4-beta.2
         imagePullPolicy: Always
         name: manager
         ports:

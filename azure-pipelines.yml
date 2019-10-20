@@ -104,4 +104,14 @@ jobs:
           --testconfig=testing/gatekeeper/config.yaml
         workingDirectory: "$(modulePath)"
         displayName: "Run clusterloader2 test"
+      - script: |
+          # removing constraint templates
+          export KUBECONFIG="kubeconfig.json"
+          kubectl delete constrainttemplates.templates.gatekeeper.sh --all
+          # waiting for 60 minutes and measuring resource usage
+          sleep 5
+          kubectl top pod -n kube-system
+        condition: and(succeeded(), eq(variables['REMOVE_CONSTRAINT_TEST'], 'true'))
+        workingDirectory: "$(modulePath)"
+        displayName: Usage after constraints are removed
       - template: azure-teardown.yaml

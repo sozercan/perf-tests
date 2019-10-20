@@ -14,16 +14,16 @@ steps:
     displayName: "Get dependencies"
 
   - script: |
-      # curl -LO https://github.com/Azure/aks-engine/releases/download/v${AKS_ENGINE_VERSION}/aks-engine-v${AKS_ENGINE_VERSION}-linux-amd64.tar.gz
-      # tar -zxvf aks-engine-v${AKS_ENGINE_VERSION}-linux-amd64.tar.gz
-      # chmod +x aks-engine-v${AKS_ENGINE_VERSION}-linux-amd64/aks-engine
-      # sudo mv aks-engine-v${AKS_ENGINE_VERSION}-linux-amd64/aks-engine /usr/local/bin/
+      curl -LO https://github.com/Azure/aks-engine/releases/download/v${AKS_ENGINE_VERSION}/aks-engine-v${AKS_ENGINE_VERSION}-linux-amd64.tar.gz
+      tar -zxvf aks-engine-v${AKS_ENGINE_VERSION}-linux-amd64.tar.gz
+      chmod +x aks-engine-v${AKS_ENGINE_VERSION}-linux-amd64/aks-engine
+      sudo mv aks-engine-v${AKS_ENGINE_VERSION}-linux-amd64/aks-engine /usr/local/bin/
 
       # adds etcd listen metrics endpoint
       # https://github.com/sozercan/aks-engine/tree/etcd-listen-metrics
-      curl -LO https://sertacstorage.blob.core.windows.net/aks-engine/aks-engine
-      chmod +x aks-engine
-      sudo mv aks-engine /usr/local/bin
+      # curl -LO https://sertacstorage.blob.core.windows.net/aks-engine/aks-engine
+      # chmod +x aks-engine
+      # sudo mv aks-engine /usr/local/bin
 
       # Download kubectl
       curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
