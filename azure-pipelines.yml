@@ -109,7 +109,7 @@ jobs:
           export KUBECONFIG="kubeconfig.json"
           kubectl delete constrainttemplates.templates.gatekeeper.sh --all
           # waiting for 60 minutes and measuring resource usage
-          sleep 5
+          sleep 3600
           kubectl top pod -n kube-system
         condition: and(succeeded(), eq(variables['REMOVE_CONSTRAINT_TEST'], 'true'))
         workingDirectory: "$(modulePath)"
