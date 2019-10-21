@@ -70,8 +70,8 @@ jobs:
           POD_COUNT: 300
         pod-500:
           POD_COUNT: 500
-        pod-600:
-          POD_COUNT: 600
+        pod-700:
+          POD_COUNT: 700
       maxParallel: 5
     displayName: Gatekeeper load test
     pool: Upstream Pool
