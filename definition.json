@@ -12,7 +12,7 @@
       }
     },
     "masterProfile": {
-      "count": 1,
+      "count": $MASTER_COUNT,
       "dnsPrefix": "$AZURE_CLUSTER_NAME",
       "vmSize": "Standard_DS4_v2",
       "storageProfile": "ManagedDisks"
