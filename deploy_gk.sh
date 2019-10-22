@@ -5,16 +5,27 @@ if [ $DEPLOY_GATEKEEPER = "true" ]; then
     sleep 5
 
     if [ $DEPLOY_GATEKEEPER_SYNC = "true" ]; then
+        # syncing pods + namespaces
         kubectl apply -f clusterloader2/testing/gatekeeper/sync.yaml
         sleep 5
 
-        # TODO: multiple templates
-        if [ $DEPLOY_GATEKEEPER_TEMPLATE = "true" ]; then
+        # deploying templates
+        t="0"
+        while [ $t -lt $NUMBER_TEMPLATES ]
+        do
+            export TEMPLATE_NAME=template-$(openssl rand -hex 6)
+
+            envsubst < clusterloader2/testing/gatekeeper/allowedrepos-template-template.yaml > clusterloader2/testing/gatekeeper/allowedrepos-template.yaml
+
             kubectl apply -f clusterloader2/testing/gatekeeper/allowedrepos-template.yaml
+
             sleep 100
 
-            i="0"
-            while [ $i -lt $NUMBER_CONSTRAINTS ]
+            t=$[$t+1]
+
+            # number of constraints per template
+            c="0"
+            while [ $c -lt $NUMBER_CONSTRAINTS ]
             do
                 export CONSTRAINT_NAME=repo-$(openssl rand -hex 6)
 
@@ -24,8 +35,8 @@ if [ $DEPLOY_GATEKEEPER = "true" ]; then
 
                 sleep 10
 
-                i=$[$i+1]
+                c=$[$c+1]
             done
-        fi
+        done
     fi
 fi
