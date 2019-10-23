@@ -16,9 +16,11 @@ steps:
       cp * $(Build.ArtifactStagingDirectory)/${POD_COUNT}
     workingDirectory: "$(modulePath)"
     displayName: Copy artifacts
+    condition: succeededOrFailed()
 
   - task: PublishBuildArtifacts@1
     displayName: Save artifacts
+    condition: succeededOrFailed()
 
   - script: |
       az login -t microsoft.com --service-principal -u ${AZURE_CLIENT_ID} -p ${CLIENT_SECRET}

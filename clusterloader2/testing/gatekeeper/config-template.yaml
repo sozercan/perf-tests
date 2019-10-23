@@ -23,6 +23,7 @@ steps:
     Params:
       action: start
       labelSelector: group = latency
+      threshold: 600s
 - measurements:
   - Identifier: WaitForRunningLatencyRCs
     Method: WaitForControlledPodsRunning
