@@ -14,6 +14,15 @@ steps:
     Method: ResourceUsageSummary
     Params:
       action: start
+  - Identifier: APIResponsiveness
+    Method: APIResponsiveness
+    Params:
+      action: reset
+  - Identifier: PodStartupLatency
+    Method: PodStartupLatency
+    Params:
+      action: start
+      labelSelector: group = latency
 - measurements:
   - Identifier: WaitForRunningLatencyRCs
     Method: WaitForControlledPodsRunning
@@ -55,6 +64,16 @@ steps:
     Params:
       action: gather
 # Collect measurements
+- measurements:
+  - Identifier: PodStartupLatency
+    Method: PodStartupLatency
+    Params:
+      action: gather
+- measurements:
+  - Identifier: APIResponsiveness
+    Method: APIResponsiveness
+    Params:
+      action: gather
 - measurements:
   - Identifier: ResourceUsageSummary
     Method: ResourceUsageSummary
