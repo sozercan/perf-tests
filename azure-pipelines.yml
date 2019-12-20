@@ -85,14 +85,14 @@ jobs:
       matrix:
         pod-100:
           POD_COUNT: 100
-        pod-200:
-          POD_COUNT: 200
-        pod-300:
-          POD_COUNT: 300
-        pod-500:
-          POD_COUNT: 500
-        pod-700:
-          POD_COUNT: 700
+        # pod-200:
+        #   POD_COUNT: 200
+        # pod-300:
+        #   POD_COUNT: 300
+        # pod-500:
+        #   POD_COUNT: 500
+        # pod-700:
+        #   POD_COUNT: 700
       maxParallel: 5
     displayName: Gatekeeper load test
     pool: Upstream Pool
@@ -129,6 +129,7 @@ jobs:
             --masterip=${AZURE_CLUSTER_NAME}.${AZURE_LOCATION}.cloudapp.azure.com \
             --mastername=k8s-master-$(cat _output/${AZURE_CLUSTER_NAME}/azuredeploy.json | jq .variables.masterVMNamePrefix | cut -c13-20)-0 \
             --testconfig=testing/gatekeeper/config.yaml
+          fi
         workingDirectory: "$(modulePath)"
         displayName: "Run clusterloader2 test"
       - script: |
