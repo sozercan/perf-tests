@@ -7,6 +7,13 @@ variables:
   modulePath: "$(GOPATH)/src/k8s.io/perf-tests" # Path to the module's code
 
 jobs:
+  - job: test_aks
+    pool: Upstream Pool
+    workspace:
+      clean: all
+    steps:
+    - template: aks-setup.yaml
+
   # Scalability Test
   - job: scalability_test
     condition: eq(1,2) # disable job
@@ -20,7 +27,7 @@ jobs:
       - script: |
           echo "##vso[task.setvariable variable=AGENT_POOL_COUNT]100"
         displayName: "Set agent pool count"
-      - template: azure-setup.yaml
+      - template: aks-engine-setup.yaml
       - script:
           ./run-e2e.sh cluster-loader2 --nodes=100 --provider=local --report-dir=_artifacts \
           --kubeconfig="$(modulePath)/kubeconfig.json" \
@@ -48,7 +55,7 @@ jobs:
       - script: |
           echo "##vso[task.setvariable variable=AGENT_POOL_COUNT]1"
         displayName: "Set agent pool count"
-      - template: azure-setup.yaml
+      - template: aks-engine-setup.yaml
       - script:
           ./run-e2e.sh cluster-loader2 --nodes=1 --provider=local --report-dir=_artifacts \
           --kubeconfig="$(modulePath)/kubeconfig.json" \
@@ -66,17 +73,18 @@ jobs:
       matrix:
         pod-100:
           POD_COUNT: 100
-        # pod-200:
-        #   POD_COUNT: 200
-        # pod-300:
-        #   POD_COUNT: 300
-        # pod-500:
-        #   POD_COUNT: 500
-        # pod-700:
-        #   POD_COUNT: 700
+        pod-200:
+          POD_COUNT: 200
+        pod-300:
+          POD_COUNT: 300
+        pod-500:
+          POD_COUNT: 500
+        pod-700:
+          POD_COUNT: 700
       maxParallel: 5
     displayName: Gatekeeper load test
     pool: Upstream Pool
+    condition: eq(1,2) # disable job
     timeoutInMinutes: 240
     cancelTimeoutInMinutes: 30
     workspace:
@@ -85,7 +93,7 @@ jobs:
       - script: |
           echo "##vso[task.setvariable variable=AGENT_POOL_COUNT]5"
         displayName: "Set agent pool count"
-      - template: azure-setup.yaml
+      - template: aks-engine-setup.yaml
       - script: |
           export KUBECONFIG="kubeconfig.json"
           MASTERINTERNALIP=$(kubectl get nodes -l "kubernetes.io/role"=="master" -o jsonpath='{.items[*].status.addresses[?(@.type=="InternalIP")].address}')
