@@ -21,23 +21,34 @@ jobs:
           echo "##vso[task.setvariable variable=AGENT_POOL_COUNT]100"
         displayName: "Set agent pool count"
       - template: aks-setup.yaml
-      - script:
-          ./run-e2e.sh cluster-loader2 --nodes=100 --provider=local --report-dir=_artifacts \
-          --kubeconfig="$(modulePath)/kubeconfig.json" \
-          --master-internal-ip=10.240.255.5 \
-          --masterip=${AZURE_CLUSTER_NAME}.${AZURE_LOCATION}.cloudapp.azure.com \
-          --mastername=k8s-master-$(cat _output/${AZURE_CLUSTER_NAME}/azuredeploy.json | jq .variables.masterVMNamePrefix | cut -c13-20)-0 \
-          --prometheus-scrape-etcd \
-          --testconfig=testing/density/config.yaml \
-          --testconfig=testing/load/config.yaml \
-          --testoverrides=./testing/density/100_nodes/override.yaml
+      - script: |
+          if [ $IS_AKS = true ]; then
+            ./run-e2e.sh cluster-loader2 --nodes=100 --provider=local --report-dir=_artifacts \
+            --kubeconfig="$(modulePath)/kubeconfig.json" \
+            --prometheus-scrape-etcd \
+            --testconfig=testing/density/config.yaml \
+            --testconfig=testing/load/config.yaml \
+            --testoverrides=./testing/density/100_nodes/override.yaml
+          else
+            export MASTERINTERNALIP=$(kubectl get nodes --kubeconfig $(modulePath)/kubeconfig.json -l "kubernetes.io/role"=="master" -o jsonpath='{.items[*].status.addresses[?(@.type=="InternalIP")].address}')
+
+            ./run-e2e.sh cluster-loader2 --nodes=100 --provider=local --report-dir=_artifacts \
+            --kubeconfig="$(modulePath)/kubeconfig.json" \
+            --master-internal-ip=${MASTERINTERNALIP} \
+            --masterip=${AZURE_CLUSTER_NAME}.${AZURE_LOCATION}.cloudapp.azure.com \
+            --mastername=k8s-master-$(cat _output/${AZURE_CLUSTER_NAME}/azuredeploy.json | jq .variables.masterVMNamePrefix | cut -c13-20)-0 \
+            --prometheus-scrape-etcd \
+            --testconfig=testing/density/config.yaml \
+            --testconfig=testing/load/config.yaml \
+            --testoverrides=./testing/density/100_nodes/override.yaml
+          fi
         workingDirectory: "$(modulePath)"
         displayName: "Run scalability test"
       - template: azure-teardown.yaml
 
   # Node Throughput Test
   - job: node_throughput_test
-    # condition: eq(1,2) # disable job
+    condition: eq(1,2) # disable job
     displayName: Node Throughput Test
     pool: Upstream Pool
     timeoutInMinutes: 30
@@ -49,13 +60,21 @@ jobs:
           echo "##vso[task.setvariable variable=AGENT_POOL_COUNT]1"
         displayName: "Set agent pool count"
       - template: aks-setup.yaml
-      - script:
-          ./run-e2e.sh cluster-loader2 --nodes=1 --provider=local --report-dir=_artifacts \
-          --kubeconfig="$(modulePath)/kubeconfig.json" \
-          --master-internal-ip=10.240.255.5 \
-          --masterip=${AZURE_CLUSTER_NAME}.${AZURE_LOCATION}.cloudapp.azure.com \
-          --mastername=k8s-master-$(cat _output/${AZURE_CLUSTER_NAME}/azuredeploy.json | jq .variables.masterVMNamePrefix | cut -c13-20)-0 \
-          --testconfig=testing/node-throughput/config.yaml
+      - script: |
+          if [ $IS_AKS = true ]; then
+            ./run-e2e.sh cluster-loader2 --nodes=1 --provider=local --report-dir=_artifacts \
+            --kubeconfig="$(modulePath)/kubeconfig.json" \
+            --testconfig=testing/node-throughput/config.yaml
+          else
+            export MASTERINTERNALIP=$(kubectl get nodes --kubeconfig $(modulePath)/kubeconfig.json -l "kubernetes.io/role"=="master" -o jsonpath='{.items[*].status.addresses[?(@.type=="InternalIP")].address}')
+
+            ./run-e2e.sh cluster-loader2 --nodes=1 --provider=local --report-dir=_artifacts \
+            --kubeconfig="$(modulePath)/kubeconfig.json" \
+            --master-internal-ip=${MASTERINTERNALIP} \
+            --masterip=${AZURE_CLUSTER_NAME}.${AZURE_LOCATION}.cloudapp.azure.com \
+            --mastername=k8s-master-$(cat _output/${AZURE_CLUSTER_NAME}/azuredeploy.json | jq .variables.masterVMNamePrefix | cut -c13-20)-0 \
+            --testconfig=testing/node-throughput/config.yaml
+          fi
         workingDirectory: "$(modulePath)"
         displayName: "Run node throughput test"
       - template: azure-teardown.yaml
@@ -79,7 +98,7 @@ jobs:
     pool: Upstream Pool
     timeoutInMinutes: 240
     cancelTimeoutInMinutes: 30
-    condition: eq(1,2) # disable job
+    # condition: eq(1,2) # disable job
     workspace:
       clean: all
     steps:
@@ -89,8 +108,6 @@ jobs:
       - template: aks-setup.yaml
       - script: |
           export KUBECONFIG="kubeconfig.json"
-          MASTERINTERNALIP=$(kubectl get nodes -l "kubernetes.io/role"=="master" -o jsonpath='{.items[*].status.addresses[?(@.type=="InternalIP")].address}')
-          echo "##vso[task.setvariable variable=MASTER_INTERNAL_IP]$MASTERINTERNALIP"
           # substitute gatekeeper variables
           envsubst < clusterloader2/testing/gatekeeper/gk-template.yaml > clusterloader2/testing/gatekeeper/gk.yaml
           # substitute e2e config variables
@@ -98,13 +115,20 @@ jobs:
           ./deploy_gk.sh
         displayName: "Deploy gatekeeper"
         workingDirectory: "$(modulePath)"
-      - script:
-          ./run-e2e.sh cluster-loader2 --nodes=${AGENT_POOL_COUNT} --provider=local --report-dir=_artifacts \
-          --kubeconfig="$(modulePath)/kubeconfig.json" \
-          --master-internal-ip=${MASTER_INTERNAL_IP} \
-          --masterip=${AZURE_CLUSTER_NAME}.${AZURE_LOCATION}.cloudapp.azure.com \
-          --mastername=k8s-master-$(cat _output/${AZURE_CLUSTER_NAME}/azuredeploy.json | jq .variables.masterVMNamePrefix | cut -c13-20)-0 \
-          --testconfig=testing/gatekeeper/config.yaml
+      - script: |
+          if [ $IS_AKS = true ]; then
+            ./run-e2e.sh cluster-loader2 --nodes=${AGENT_POOL_COUNT} --provider=local --report-dir=_artifacts \
+            --kubeconfig="$(modulePath)/kubeconfig.json" \
+            --testconfig=testing/gatekeeper/config.yaml
+          else
+            export MASTERINTERNALIP=$(kubectl get nodes --kubeconfig $(modulePath)/kubeconfig.json -l "kubernetes.io/role"=="master" -o jsonpath='{.items[*].status.addresses[?(@.type=="InternalIP")].address}')
+
+            ./run-e2e.sh cluster-loader2 --nodes=${AGENT_POOL_COUNT} --provider=local --report-dir=_artifacts \
+            --kubeconfig="$(modulePath)/kubeconfig.json" \
+            --master-internal-ip=${MASTER_INTERNAL_IP} \
+            --masterip=${AZURE_CLUSTER_NAME}.${AZURE_LOCATION}.cloudapp.azure.com \
+            --mastername=k8s-master-$(cat _output/${AZURE_CLUSTER_NAME}/azuredeploy.json | jq .variables.masterVMNamePrefix | cut -c13-20)-0 \
+            --testconfig=testing/gatekeeper/config.yaml
         workingDirectory: "$(modulePath)"
         displayName: "Run clusterloader2 test"
       - script: |
