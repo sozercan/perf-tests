@@ -7,13 +7,6 @@ variables:
   modulePath: "$(GOPATH)/src/k8s.io/perf-tests" # Path to the module's code
 
 jobs:
-  - job: test_aks
-    pool: Upstream Pool
-    workspace:
-      clean: all
-    steps:
-    - template: aks-setup.yaml
-
   # Scalability Test
   - job: scalability_test
     condition: eq(1,2) # disable job
@@ -27,7 +20,7 @@ jobs:
       - script: |
           echo "##vso[task.setvariable variable=AGENT_POOL_COUNT]100"
         displayName: "Set agent pool count"
-      - template: aks-engine-setup.yaml
+      - template: aks-setup.yaml
       - script:
           ./run-e2e.sh cluster-loader2 --nodes=100 --provider=local --report-dir=_artifacts \
           --kubeconfig="$(modulePath)/kubeconfig.json" \
@@ -44,7 +37,7 @@ jobs:
 
   # Node Throughput Test
   - job: node_throughput_test
-    condition: eq(1,2) # disable job
+    # condition: eq(1,2) # disable job
     displayName: Node Throughput Test
     pool: Upstream Pool
     timeoutInMinutes: 30
@@ -55,7 +48,7 @@ jobs:
       - script: |
           echo "##vso[task.setvariable variable=AGENT_POOL_COUNT]1"
         displayName: "Set agent pool count"
-      - template: aks-engine-setup.yaml
+      - template: aks-setup.yaml
       - script:
           ./run-e2e.sh cluster-loader2 --nodes=1 --provider=local --report-dir=_artifacts \
           --kubeconfig="$(modulePath)/kubeconfig.json" \
@@ -84,7 +77,6 @@ jobs:
       maxParallel: 5
     displayName: Gatekeeper load test
     pool: Upstream Pool
-    condition: eq(1,2) # disable job
     timeoutInMinutes: 240
     cancelTimeoutInMinutes: 30
     workspace:
@@ -93,7 +85,7 @@ jobs:
       - script: |
           echo "##vso[task.setvariable variable=AGENT_POOL_COUNT]5"
         displayName: "Set agent pool count"
-      - template: aks-engine-setup.yaml
+      - template: aks-setup.yaml
       - script: |
           export KUBECONFIG="kubeconfig.json"
           MASTERINTERNALIP=$(kubectl get nodes -l "kubernetes.io/role"=="master" -o jsonpath='{.items[*].status.addresses[?(@.type=="InternalIP")].address}')
