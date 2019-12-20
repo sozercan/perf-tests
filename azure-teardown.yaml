@@ -23,6 +23,7 @@ steps:
     condition: succeededOrFailed()
 
   - script: |
+      rm ${LOCAL_SSH_KEY}*
       az login -t microsoft.com --service-principal -u ${AZURE_CLIENT_ID} -p ${CLIENT_SECRET}
       az group delete -n ${AZURE_CLUSTER_NAME} --subscription ${AZURE_SUBSCRIPTION_ID} --yes --no-wait
     displayName: "Teardown cluster"

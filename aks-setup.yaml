@@ -25,7 +25,7 @@ steps:
 
   - script: |
       az group create -n ${AZURE_CLUSTER_NAME} -l ${AZURE_LOCATION}
-      az aks create -g ${AZURE_CLUSTER_NAME} -n ${AZURE_CLUSTER_NAME} --subscription ${AZURE_SUBSCRIPTION_ID} --node-count ${AGENT_POOL_COUNT} --kubernetes-version ${KUBERNETES_VERSION} --node-vm-size Standard_DS2_v2 --location ${AZURE_LOCATION} --service-principal ${AZURE_CLIENT_ID} --client-secret ${CLIENT_SECRET} --admin-username ${AZURE_ADMIN_USERNAME} --ssh-key-value ${LOCAL_SSH_KEY} --wait
+      az aks create -g ${AZURE_CLUSTER_NAME} -n ${AZURE_CLUSTER_NAME} --subscription ${AZURE_SUBSCRIPTION_ID} --node-count ${AGENT_POOL_COUNT} --kubernetes-version ${KUBERNETES_VERSION} --node-vm-size Standard_DS2_v2 --location ${AZURE_LOCATION} --service-principal ${AZURE_CLIENT_ID} --client-secret ${CLIENT_SECRET} --admin-username ${AZURE_ADMIN_USERNAME} --ssh-key-value ${LOCAL_SSH_KEY}.pub
       az aks get-credentials -n ${AZURE_CLUSTER_NAME} -g ${AZURE_CLUSTER_NAME}
     displayName: "Deploy AKS cluster"
     workingDirectory: "$(modulePath)"
