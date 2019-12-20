@@ -79,6 +79,7 @@ jobs:
     pool: Upstream Pool
     timeoutInMinutes: 240
     cancelTimeoutInMinutes: 30
+    condition: eq(1,2) # disable job
     workspace:
       clean: all
     steps:
