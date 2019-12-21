@@ -108,6 +108,7 @@ jobs:
       - template: aks-setup.yaml
       - script: |
           export KUBECONFIG="kubeconfig.json"
+          export NAMESPACE="kube-system"
           # substitute gatekeeper variables
           envsubst < clusterloader2/testing/gatekeeper/gk-template.yaml > clusterloader2/testing/gatekeeper/gk.yaml
           # substitute e2e config variables

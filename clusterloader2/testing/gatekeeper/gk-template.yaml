@@ -3,7 +3,7 @@ kind: Namespace
 metadata:
   labels:
     control-plane: controller-manager
-  name: gatekeeper-system
+  name: $NAMESPACE
 ---
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
@@ -269,19 +269,19 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: default
-    namespace: gatekeeper-system
+    namespace: $NAMESPACE
 ---
 apiVersion: v1
 kind: Secret
 metadata:
   name: gatekeeper-webhook-server-cert
-  namespace: gatekeeper-system
+  namespace: $NAMESPACE
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: gatekeeper-webhook-service
-  namespace: gatekeeper-system
+  namespace: $NAMESPACE
 spec:
   ports:
     - port: 443
@@ -295,7 +295,7 @@ metadata:
   labels:
     control-plane: controller-manager
   name: gatekeeper-controller-manager
-  namespace: gatekeeper-system
+  namespace: $NAMESPACE
 spec:
   replicas: 1
   selector:
@@ -367,7 +367,7 @@ webhooks:
       caBundle: Cg==
       service:
         name: gatekeeper-webhook-service
-        namespace: gatekeeper-system
+        namespace: $NAMESPACE
         path: /v1/admit
     failurePolicy: Ignore
     name: validation.gatekeeper.sh
