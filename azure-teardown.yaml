@@ -18,9 +18,12 @@ steps:
     displayName: Copy artifacts
     condition: succeededOrFailed()
 
-  - task: PublishBuildArtifacts@1
+  - task: PublishPipelineArtifact@1
     displayName: Save artifacts
     condition: succeededOrFailed()
+    inputs:
+      artifactName: drop-${POD_COUNT}
+      targetPath: $(Build.ArtifactStagingDirectory)
 
   - script: |
       rm ${LOCAL_SSH_KEY}*
