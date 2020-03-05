@@ -21,7 +21,7 @@ import (
 	"strings"
 	"time"
 
-	"k8s.io/api/core/v1"
+	v1 "k8s.io/api/core/v1"
 	clientset "k8s.io/client-go/kubernetes"
 	"k8s.io/klog"
 )
@@ -93,7 +93,7 @@ func WaitForPods(clientSet clientset.Interface, stopCh <-chan struct{}, options 
 			}
 			// We allow inactive pods (e.g. eviction happened).
 			// We wait until there is a desired number of pods running and all other pods are inactive.
-			if len(pods) == (podsStatus.Running+podsStatus.Inactive) && podsStatus.Running == podsStatus.RunningUpdated && podsStatus.RunningUpdated == options.DesiredPodCount {
+			if len(pods) == (podsStatus.Running + podsStatus.Inactive) {
 				return nil
 			}
 			oldPods = pods
