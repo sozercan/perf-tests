@@ -34,8 +34,8 @@ import (
 )
 
 const (
-	resourceDataGatheringPeriod = 60 * time.Second
-	probeDuration               = 15 * time.Second
+	resourceDataGatheringPeriod = 5 * time.Minute
+	probeDuration               = 10 * time.Second
 )
 
 type ResourceConstraint struct {
@@ -147,7 +147,7 @@ func (w *resourceGatherWorker) singleProbe() {
 		}
 		for k, v := range kubemarkData {
 			data[k] = &ContainerResourceUsage{
-				Name: v.Name,
+				Name:                    v.Name,
 				MemoryWorkingSetInBytes: v.MemoryWorkingSetInBytes,
 				CPUUsageInCores:         v.CPUUsageInCores,
 			}

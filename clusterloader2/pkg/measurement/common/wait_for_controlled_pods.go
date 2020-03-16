@@ -22,7 +22,7 @@ import (
 	"sync"
 	"time"
 
-	"k8s.io/api/core/v1"
+	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/meta"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -41,10 +41,10 @@ import (
 )
 
 const (
-	defaultSyncTimeout               = 60 * time.Second
-	defaultOperationTimeout          = 10 * time.Minute
-	checkControlledPodsInterval      = 5 * time.Second
-	informerSyncTimeout              = time.Minute
+	defaultSyncTimeout               = 15 * time.Minute
+	defaultOperationTimeout          = 15 * time.Minute
+	checkControlledPodsInterval      = 5 * time.Minute
+	informerSyncTimeout              = 15 * time.Minute
 	waitForControlledPodsRunningName = "WaitForControlledPodsRunning"
 	waitForControlledPodsWorkers     = 10
 )

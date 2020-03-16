@@ -26,8 +26,8 @@ import (
 )
 
 const (
-	defaultWaitForPodsTimeout         = 60 * time.Second
-	defaultWaitForPodsInterval        = 5 * time.Second
+	defaultWaitForPodsTimeout         = 15 * time.Minute
+	defaultWaitForPodsInterval        = 5 * time.Minute
 	waitForRunningPodsMeasurementName = "WaitForRunningPods"
 )
 
