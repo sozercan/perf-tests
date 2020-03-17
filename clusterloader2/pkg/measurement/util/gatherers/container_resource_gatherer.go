@@ -159,7 +159,8 @@ func (g *ContainerResourceGatherer) StartGatheringData() {
 		return
 	}
 	delayPeriod := g.options.ResourceDataGatheringPeriod / time.Duration(len(g.workers))
-	delay := time.Duration(0)
+	// delay := time.Duration(0)
+	delay := 5 * time.Minute
 	for i := range g.workers {
 		go g.workers[i].gather(delay)
 		delay += delayPeriod
@@ -180,7 +181,7 @@ func (g *ContainerResourceGatherer) StopAndSummarize(percentiles []int) (*Resour
 	select {
 	case <-finished:
 		klog.Infof("Waitgroup finished.")
-	case <-time.After(2 * time.Minute):
+	case <-time.After(10 * time.Minute):
 		unfinished := make([]string, 0)
 		for i := range g.workers {
 			if !g.workers[i].finished {

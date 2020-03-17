@@ -35,7 +35,7 @@ import (
 
 const (
 	resourceDataGatheringPeriod = 5 * time.Minute
-	probeDuration               = 10 * time.Second
+	probeDuration               = 5 * time.Second
 )
 
 type ResourceConstraint struct {

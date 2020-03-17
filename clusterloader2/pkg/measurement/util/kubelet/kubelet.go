@@ -98,6 +98,7 @@ func getStatsSummary(c clientset.Interface, nodeName string) (*stats.Summary, er
 	summary := stats.Summary{}
 	err = json.Unmarshal(data, &summary)
 	if err != nil {
+		fmt.Println("error while gathering node stats summary")
 		return nil, err
 	}
 	return &summary, nil
