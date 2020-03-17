@@ -107,8 +107,8 @@ func (e *resourceUsageMetricMeasurement) Execute(config *measurement.Measurement
 		e.gatherer, err = gatherers.NewResourceUsageGatherer(config.ClusterFramework.GetClientSets().GetClient(), host, provider, gatherers.ResourceGathererOptions{
 			InKubemark:                        strings.ToLower(provider) == "kubemark",
 			Nodes:                             nodesSet,
-			ResourceDataGatheringPeriod:       60 * time.Second,
-			MasterResourceDataGatheringPeriod: 10 * time.Second,
+			ResourceDataGatheringPeriod:       5 * time.Minute,
+			MasterResourceDataGatheringPeriod: 5 * time.Minute,
 			PrintVerboseLogs:                  false,
 		}, nil)
 		if err != nil {
