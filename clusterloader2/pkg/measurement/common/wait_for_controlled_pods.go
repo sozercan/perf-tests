@@ -46,7 +46,7 @@ const (
 	checkControlledPodsInterval      = 5 * time.Minute
 	informerSyncTimeout              = 15 * time.Minute
 	waitForControlledPodsRunningName = "WaitForControlledPodsRunning"
-	waitForControlledPodsWorkers     = 10
+	waitForControlledPodsWorkers     = 1
 )
 
 func init() {
